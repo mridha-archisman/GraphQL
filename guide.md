@@ -479,3 +479,48 @@ the query variables in this way.
 ```
 
 ## Error Handling
+
+Let us consider, user authenticated. More specifically user signup. Users can run into some errors,
+like signing up with an existing email or enetering wrong password. How do we handle those errors !
+
+```js
+
+    function signup ( parent, args, request ) {
+
+        return User.findOne({ email }).then(
+
+            existingUser => {
+
+                if ( existingUser ) {
+
+                    throw new Error('Email in use');
+                }
+
+                else {
+
+                    return user.save( );
+                }
+            }
+        );
+    }
+```
+
+In the client-side, we can access this error:
+
+```js
+
+    this.props.mutate({
+
+        ...
+    }).catch(
+
+        response => {
+
+            const errors = response.graphQLErrors.map(
+
+                // error.message is the error that we threw
+                error => error.message
+            );
+        }
+    );
+```
